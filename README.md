@@ -37,7 +37,7 @@ A Chrome extension that enhances your WhatsApp Web experience with intelligent G
 
 ## Obtaining a Gemini API Key
 
-1.  Go to [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey) (Google AI Studio - formerly MakerSuite).
+1.  Go to [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey) (Google AI Studio - formerly MakerSuite).
 2.  Follow the instructions to create a new API key.
 3.  Copy the API key and paste it into the extension's settings.
 

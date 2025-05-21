@@ -10,7 +10,10 @@
 </head>
 
 <body>
-  <h1>Gemini Responder</h1>
+  <div class="header">
+    <h1>Gemini Responder</h1>
+    <img src="images/sign.svg" alt="Gemini Logo" class="logo">
+  </div>
 
   <label for="geminiApiKey">Gemini API Key:</label>
   <input type="text" id="geminiApiKey" placeholder="Enter your API Key">
@@ -21,7 +24,8 @@
   </select>
 
   <label for="customPrompt">Custom Prompt:</label>
-  <textarea id="customPrompt" placeholder="Enter your custom prompt (max 1,000,000 characters)" rows="5" cols="30"></textarea>
+  <textarea id="customPrompt" placeholder="Enter your custom prompt (max 1,000,000 characters)" rows="5"
+    cols="30"></textarea>
 
   <div class="toggle-container">
     <label for="enableGemini">Enable Gemini:</label>
