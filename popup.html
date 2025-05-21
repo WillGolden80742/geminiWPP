@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Responder</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <h1>Gemini Responder</h1>
+
+  <label for="geminiApiKey">Gemini API Key:</label>
+  <input type="text" id="geminiApiKey" placeholder="Enter your API Key">
+
+  <label for="geminiModel">Gemini Model:</label>
+  <select id="geminiModel">
+    <option disabled selected>Loading models...</option>
+  </select>
+
+  <label for="customPrompt">Custom Prompt:</label>
+  <textarea id="customPrompt" placeholder="Enter your custom prompt (max 1,000,000 characters)" rows="5" cols="30"></textarea>
+
+  <div class="toggle-container">
+    <label for="enableGemini">Enable Gemini:</label>
+    <label class="switch">
+      <input type="checkbox" id="enableGemini">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <button id="saveSettings">Save Settings</button>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
