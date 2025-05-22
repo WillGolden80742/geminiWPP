@@ -1,98 +1,121 @@
-let geminiObserver = null;
-// Define um seletor mais genérico que busca pelo atributo contenteditable e o role="textbox"
-const selectorWhatsAppInput = 'div[data-tab="10"][role="textbox"]';
+// content.js
 
+let geminiObserver = null;
+
+// Seletor genérico para o campo de texto do WhatsApp
+const WHATSAPP_INPUT_SELECTOR = 'div[data-tab="10"][role="textbox"]';
+
+/**
+ * Obtém uma resposta da API Gemini com base no contexto da conversa.
+ * @param {string} context Histórico da conversa.
+ * @returns {Promise<string>} Resposta do Gemini.
+ */
 async function getGeminiResponse(context) {
-    setTimeout(() => {
-        return new Promise((resolve) => {
-            chrome.storage.sync.get(["geminiApiKey", "geminiModel", "customPrompt"], async ({  // get customPrompt
-                geminiApiKey,
-                geminiModel,
-                customPrompt
-            }) => {
+    return new Promise((resolve) => {
+        // Adiciona um pequeno atraso para garantir que a interface do WhatsApp esteja pronta
+        setTimeout(async () => {
+            try {
+                // Recupera as configurações da extensão do armazenamento local
+                const {
+                    geminiApiKey,
+                    geminiModel,
+                    customPrompt
+                } = await chrome.storage.sync.get(["geminiApiKey", "geminiModel", "customPrompt"]);
+
+                // Define o modelo Gemini a ser usado (usa o padrão se não estiver configurado)
                 const model = geminiModel || 'gemini-1.5-flash';
                 const apiKey = geminiApiKey;
-                const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-                const quotedMessage = getQuotedMessage();
-                // Validar se apiKey está presente
+
+                // Verifica se a chave da API está configurada
                 if (!apiKey) {
-                    console.error("A chave da API Gemini não está definida. Por favor, adicione a chave nas opções da extensão.");
-                    resolve("A chave da API Gemini não está definida. Por favor, adicione a chave nas opções da extensão.");
+                    const errorMessage = "Gemini API key not set. Please configure in the extension options.";
+                    console.error(errorMessage);
+                    resolve(errorMessage);
                     return;
                 }
 
-                let prompt = ``;
+                const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const quotedMessage = getQuotedMessage();
+                const prompt = createGeminiPrompt(context, quotedMessage, customPrompt);
 
-                if (customPrompt) {
-                   prompt += `${customPrompt}\n\n`; // add custom prompt at the begining
-                }
-
-                 prompt += `Com base nas seguintes mensagens do WhatsApp, gere uma resposta adequada:
-
-                Contexto da conversa:
-                ${context}
-
-                Responda essa mensagem com base no contexto:
-                ${quotedMessage}
-
-                Resposta:`;
-
-                const data = {
-                    prompt: prompt
-                };
-
-                try {
-                    const response = await fetch(geminiApiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: prompt
-                                }]
+                const response = await fetch(geminiApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
                             }]
-                        })
-                    });
-                    const whatsAppInputElement = document.querySelector(selectorWhatsAppInput);
-                    if (!response.ok) {
-                       const error = `Erro na requisição para a API Gemini: ${response.status} - ${response.statusText}`;
-                       injectGeminiResponse(whatsAppInputElement, error);
-                        throw new Error(error);
-                    }
+                        }]
+                    })
+                });
 
-                    const responseData = await response.json();
+                // Obtém o elemento de input do WhatsApp
+                const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
 
-                    let geminiReply = "Não foi possível gerar uma resposta com o Gemini.";  // fallback
-                    if (responseData.candidates && responseData.candidates.length > 0) {
-                        geminiReply = responseData.candidates[0].content.parts[0].text;
-                    } else {
-                        console.warn("Resposta da API Gemini não continha candidates válidos.");
-                    }
-                    resolve(geminiReply);
-                    injectGeminiResponse(whatsAppInputElement, geminiReply);
-                } catch (error) {
-                    console.error("Erro ao obter resposta do Gemini:", error);
-                    resolve("Erro ao obter resposta do Gemini. Verifique o console para detalhes.");
+                // Trata erros na resposta da API
+                if (!response.ok) {
+                    const error = `Gemini API request failed: ${response.status} - ${response.statusText}`;
+                    injectGeminiResponse(whatsAppInputElement, error);
+                    throw new Error(error);
                 }
-            });
-        });
-    }, 1000);
+
+                const responseData = await response.json();
+
+                // Extrai a resposta do Gemini ou usa uma mensagem de fallback
+                let geminiReply = "Could not generate a response with Gemini.";
+                if (responseData.candidates && responseData.candidates.length > 0) {
+                    geminiReply = responseData.candidates[0].content.parts[0].text;
+                } else {
+                    console.warn("Gemini API response did not contain valid candidates.");
+                }
+
+                // Injeta a resposta no campo de texto do WhatsApp
+                injectGeminiResponse(whatsAppInputElement, geminiReply);
+                resolve(geminiReply);
+            } catch (error) {
+                console.error("Error fetching Gemini response:", error);
+                resolve("Error fetching Gemini response. Check the console for details.");
+            }
+        }, 1000);
+    });
 }
 
+/**
+ * Cria o prompt para a API Gemini.
+ * @param {string} context Histórico da conversa.
+ * @param {string} quotedMessage Mensagem citada.
+ * @param {string} customPrompt Prompt customizado.
+ * @returns {string} Prompt formatado.
+ */
+function createGeminiPrompt(context, quotedMessage, customPrompt) {
+    const userLanguage = navigator.language || navigator.userLanguage;
+    let prompt = '';
+    if (customPrompt) {
+        prompt += `${customPrompt}\n\n`;
+    }
 
-// Função para injetar a resposta do Gemini no campo de texto do WhatsApp
+    prompt += `Based on the following WhatsApp messages, generate an appropriate response in ${userLanguage} language: Context of the conversation: ${context} Respond to this message based on the context: ${quotedMessage} Response:`;
+
+    return prompt;
+}
+
+/**
+ * Injeta a resposta do Gemini no campo de texto do WhatsApp e dispara o evento de input.
+ * @param {HTMLElement} whatsAppTargetElement Elemento de input do WhatsApp.
+ * @param {string} geminiResponse Resposta do Gemini.
+ */
 async function injectGeminiResponse(whatsAppTargetElement, geminiResponse) {
     if (!whatsAppTargetElement) {
-        console.warn("WhatsApp Signature: Campo de texto do WhatsApp não encontrado.");
+        console.warn("WhatsApp Signature: WhatsApp text input field not found.");
         return;
     }
 
-    // Usar a resposta do Gemini diretamente no campo de texto
     whatsAppTargetElement.textContent = geminiResponse;
 
-    // Disparar evento 'input' para o WhatsApp reconhecer a mudança
+    // Dispara o evento 'input' para que o WhatsApp reconheça a mudança
     const inputEvent = new InputEvent('input', {
         bubbles: true,
         cancelable: true,
@@ -100,9 +123,13 @@ async function injectGeminiResponse(whatsAppTargetElement, geminiResponse) {
     });
     whatsAppTargetElement.dispatchEvent(inputEvent);
 
-    whatsAppTargetElement.focus(); // Manter o foco no input para o usuário continuar digitando
+    whatsAppTargetElement.focus(); // Mantém o foco no input para o usuário continuar digitando
 }
-// Função para coletar o histórico de mensagens
+
+/**
+ * Coleta o histórico de mensagens do chat atual.
+ * @returns {string} Histórico da conversa formatado.
+ */
 function collectChatHistory() {
     const messageOutElements = document.querySelectorAll('.message-out .copyable-text');
     const messageInElements = document.querySelectorAll('.message-in .copyable-text');
@@ -119,67 +146,79 @@ function collectChatHistory() {
     return messages.join('\n');
 }
 
-// Função para obter a última mensagem, incluindo as suas
+/**
+ * Obtém a última mensagem citada.
+ * @returns {string} Conteúdo da mensagem citada.
+ */
 function getQuotedMessage() {
     const messageElements = document.querySelectorAll('.quoted-mention');
-    if (messageElements) {
+    if (messageElements && messageElements.length > 0) {
         return messageElements[messageElements.length - 1].textContent;
     }
-    return ""; // Retorna uma string vazia se não houver mensagens
+    return "";
 }
-// Função para observar a interface do WhatsApp e adicionar o item de menu Gemini
+
+/**
+ * Observa a interface do WhatsApp para adicionar o item de menu Gemini.
+ */
 function observeMenuElement() {
     const observer = new MutationObserver(mutations => {
-        // Encontra a ul dentro do menu
+        // Encontra o elemento ul dentro do menu
         const ulElement = document.querySelector('[data-icon="reply-refreshed"]').parentElement.parentElement.parentElement.parentElement.parentElement;
         if (ulElement) {
-                setTimeout(() => {
-                    chrome.storage.sync.get(["geminiEnabled"], async ({
-                                    geminiEnabled
-                    }) => {
-                        if (geminiEnabled && !document.querySelector('.reply_by_gemini')) {
+            // Pequeno atraso para garantir que o elemento esteja totalmente carregado
+            setTimeout(async () => {
+                const {
+                    geminiEnabled
+                } = await chrome.storage.sync.get(["geminiEnabled"]);
 
-                                // Cria o elemento li para "Responder com Gemini"
-                                const geminiLiElement = createGeminiMenuItem();
+                // Verifica se o Gemini está habilitado e o item de menu ainda não existe
+                if (geminiEnabled && !document.querySelector('.reply_by_gemini')) {
+                    // Cria o item de menu "Responder com Gemini"
+                    const geminiLiElement = createGeminiMenuItem();
 
-                                // Adiciona o item "Responder com Gemini" ao início da lista
-                                ulElement.insertBefore(geminiLiElement, ulElement.firstChild);
+                    // Adiciona o item ao início da lista
+                    ulElement.insertBefore(geminiLiElement, ulElement.firstChild);
 
-                                // Adiciona um evento de clique para o item "Responder com Gemini"
-                                geminiLiElement.addEventListener('click', async () => {
-                                        chrome.storage.sync.get(["geminiEnabled"], async ({
-                                            geminiEnabled
-                                        }) => {
-                                            if (geminiEnabled === false) {
-                                                alert("O Gemini está desativado nas opções da extensão.");
-                                                return;
-                                            }
-                                            document.querySelector('[data-icon="reply-refreshed"]').parentElement.click();
-                                            const chatHistory = collectChatHistory();
-                                            // Obter a resposta do Gemini
-                                            getGeminiResponse(chatHistory);
+                    // Adiciona o evento de clique para o item "Responder com Gemini"
+                    geminiLiElement.addEventListener('click', async () => {
+                        const {
+                            geminiEnabled
+                        } = await chrome.storage.sync.get(["geminiEnabled"]);
 
-                                        });
-                                });
-                        
+                        // Verifica se o Gemini está habilitado
+                        if (!geminiEnabled) {
+                            alert("Gemini is disabled in the extension options.");
+                            return;
                         }
-                    });
 
+                        // Simula o clique no botão de resposta
+                        document.querySelector('[data-icon="reply-refreshed"]').parentElement.click();
+
+                        const chatHistory = collectChatHistory();
+                        // Obtém a resposta do Gemini
+                        getGeminiResponse(chatHistory);
+                    });
+                }
             }, 125);
-            observer.disconnect();
-            observeMenuElement();
+
+            observer.disconnect(); // Desconecta o observer após encontrar e modificar o menu
+            observeMenuElement(); // Reinicia a observação para futuras mudanças
         }
     });
 
-    // Configuração do observer: observar adições de nós (subtree para observar elementos dentro de elementos).
     const config = {
         childList: true,
         subtree: true
     };
 
-    // Inicia a observação do documento (ou do elemento que contém o potencial 'menu').
     observer.observe(document.body, config);
 }
+
+/**
+ * Cria o elemento de menu "Responder com Gemini".
+ * @returns {HTMLLIElement} Elemento de menu "Responder com Gemini".
+ */
 function createGeminiMenuItem() {
     const geminiLiElement = document.createElement('li');
     geminiLiElement.setAttribute('tabindex', '0');
@@ -190,13 +229,13 @@ function createGeminiMenuItem() {
     geminiLiElement.setAttribute('role', 'button');
     geminiLiElement.style.opacity = '1';
 
-    // Add the hover style using JavaScript.  This is important as it dynamically adds the style.
-    geminiLiElement.addEventListener('mouseover', function() {
+    // Adiciona o estilo de hover usando JavaScript
+    geminiLiElement.addEventListener('mouseover', function () {
         geminiLiElement.style.backgroundColor = '#ffffff1a';
     });
 
-    geminiLiElement.addEventListener('mouseout', function() {
-        geminiLiElement.style.backgroundColor = ''; // Or revert to the original background if it had one.
+    geminiLiElement.addEventListener('mouseout', function () {
+        geminiLiElement.style.backgroundColor = '';
     });
 
     const outerDiv = document.createElement('div');
@@ -236,7 +275,7 @@ function createGeminiMenuItem() {
 
     const spanText = document.createElement('span');
     spanText.className = 'x1o2sk6j x6prxxf x6ikm8r x10wlt62 xlyipyv xuxw1ft xqmxbcd';
-    spanText.textContent = 'Responder com Gemini';
+    spanText.textContent = 'Reply with Gemini';
 
     outerDiv.appendChild(spanText);
     geminiLiElement.appendChild(outerDiv);
@@ -244,11 +283,10 @@ function createGeminiMenuItem() {
     return geminiLiElement;
 }
 
-
 // Aguarda a interface carregar antes de iniciar (primeira vez)
 const appObserver = new MutationObserver((mutations) => {
     // Usa o mesmo seletor genérico para o elemento inicial
-    const appElement = document.querySelector(selectorWhatsAppInput);
+    const appElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
 
     if (appElement) {
         // Inicia a observação.  Chame esta função quando a página estiver carregada.
