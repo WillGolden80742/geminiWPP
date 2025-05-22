@@ -19,8 +19,11 @@ async function getGeminiResponse(context) {
                 const {
                     geminiApiKey,
                     geminiModel,
-                    customPrompt
-                } = await chrome.storage.sync.get(["geminiApiKey", "geminiModel", "customPrompt"]);
+                    //customPrompt
+                } = await chrome.storage.sync.get(["geminiApiKey", "geminiModel"]);
+
+                const { customPrompt } = await chrome.storage.local.get(["customPrompt"]);
+
 
                 // Define o modelo Gemini a ser usado (usa o padrão se não estiver configurado)
                 const model = geminiModel || 'gemini-1.5-flash';

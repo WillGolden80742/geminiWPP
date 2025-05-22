@@ -6,17 +6,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const customPromptTextarea = document.getElementById("customPrompt");
 
     // Carrega configurações do Chrome Storage
-    chrome.storage.sync.get(["geminiApiKey", "geminiModel", "geminiEnabled", "customPrompt"], (data) => {
-        apiKeyInput.value = data.geminiApiKey || "";
-        enableGemini.checked = data.geminiEnabled !== false;
-        customPromptTextarea.value = data.customPrompt || "";
-
+    chrome.storage.sync.get(["geminiApiKey", "geminiModel", "geminiEnabled"], (syncData) => { // Keep API key, model, and enabled in sync
+        apiKeyInput.value = syncData.geminiApiKey || "";
+        enableGemini.checked = syncData.geminiEnabled !== false;
 
         // Carrega os modelos disponíveis assim que a chave for preenchida
-        if (data.geminiApiKey) {
-            fetchModels(data.geminiApiKey, data.geminiModel);
+        if (syncData.geminiApiKey) {
+            fetchModels(syncData.geminiApiKey, syncData.geminiModel);
         }
     });
+
+    chrome.storage.local.get(["customPrompt"], (localData) => { // Load custom prompt from local storage
+        customPromptTextarea.value = localData.customPrompt || "";
+    });
+
 
     // Atualiza a lista de modelos quando a API Key muda
     apiKeyInput.addEventListener("change", () => {
@@ -33,14 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const isEnabled = enableGemini.checked;
         const customPrompt = customPromptTextarea.value;
 
-
+        // Save API key, model, and enabled settings to sync storage
         chrome.storage.sync.set({
             geminiApiKey: apiKey,
             geminiModel: model,
             geminiEnabled: isEnabled,
-            customPrompt: customPrompt  // save custom prompt
         }, () => {
-            console.log("Settings saved.");
+            console.log("Sync settings saved.");
+        });
+
+        // Save custom prompt to local storage
+        chrome.storage.local.set({
+            customPrompt: customPrompt
+        }, () => {
+            console.log("Local settings saved.");
             alert("Settings saved!");
         });
     });
