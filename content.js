@@ -79,7 +79,9 @@ async function getGeminiResponse(context) {
                 injectGeminiResponse(whatsAppInputElement, geminiReply);
                 resolve(geminiReply);
             } catch (error) {
-                console.error("Error fetching Gemini response:", error);
+                const errorMessage = "Error fetching Gemini response:"+ error;
+                console.error(errorMessage);
+                injectGeminiResponse(whatsAppInputElement,errorMessage);
                 resolve("Error fetching Gemini response. Check the console for details.");
             }
         }, 1000);
@@ -134,20 +136,27 @@ async function injectGeminiResponse(whatsAppTargetElement, geminiResponse) {
  * @returns {string} Histórico da conversa formatado.
  */
 function collectChatHistory() {
-    const messageOutElements = document.querySelectorAll('.message-out .copyable-text');
-    const messageInElements = document.querySelectorAll('.message-in .copyable-text');
+    const messageBotElements = document.querySelectorAll('.message-out .copyable-text');
+    const messageUserElements = document.querySelectorAll('.message-in .copyable-text');
     const messages = [];
 
-    messageOutElements.forEach(element => {
-        messages.push(`send me message => ${element.textContent}`);
+    messageBotElements.forEach(element => {
+        messages.push({
+            sender: 'bot',
+            message: element.textContent.trim()
+        });
     });
 
-    messageInElements.forEach(element => {
-        messages.push(`my message => ${element.textContent}`);
+    messageUserElements.forEach(element => {
+        messages.push({
+            sender: 'client',
+            message: element.textContent.trim()
+        });
     });
 
-    return messages.join('\n');
+    return JSON.stringify(messages); // Retorna uma string JSON formatada
 }
+
 
 /**
  * Obtém a última mensagem citada.
@@ -156,7 +165,7 @@ function collectChatHistory() {
 function getQuotedMessage() {
     const messageElements = document.querySelectorAll('.quoted-mention');
     if (messageElements && messageElements.length > 0) {
-        return messageElements[messageElements.length - 1].textContent;
+        return messageElements[messageElements.length - 1].parentElement.parentElement.textContent;
     }
     return "";
 }
@@ -226,7 +235,7 @@ function createGeminiMenuItem() {
     const geminiLiElement = document.createElement('li');
     geminiLiElement.setAttribute('tabindex', '0');
     geminiLiElement.className = 'reply_by_gemini';
-    geminiLiElement.style.color = '#FFFFFF99';
+    geminiLiElement.style.color = '#a5a5a5';
     geminiLiElement.style.borderRadius = '10px';
     geminiLiElement.setAttribute('data-animate-dropdown-item', 'true');
     geminiLiElement.setAttribute('role', 'button');
@@ -234,7 +243,7 @@ function createGeminiMenuItem() {
 
     // Adiciona o estilo de hover usando JavaScript
     geminiLiElement.addEventListener('mouseover', function () {
-        geminiLiElement.style.backgroundColor = '#ffffff1a';
+        geminiLiElement.style.backgroundColor = '#343636';
     });
 
     geminiLiElement.addEventListener('mouseout', function () {
@@ -262,10 +271,10 @@ function createGeminiMenuItem() {
     gBlack.setAttribute('id', '#000000ff');
 
     const gWhite = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    gWhite.setAttribute('id', '#FFFFFF99');
+    gWhite.setAttribute('id', '#a5a5a5');
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('fill', '#FFFFFF99');
+    path.setAttribute('fill', '#a5a5a5');
     path.setAttribute('opacity', '1.00');
     path.setAttribute('d', 'M 111.44 11.58 C 112.16 8.06 111.65 4.39 112.57 0.90 C 114.22 16.23 117.52 31.57 124.69 45.34 C 142.54 83.30 182.12 109.91 224.02 112.08 L 224.07 112.95 C 202.02 113.69 180.48 121.86 162.62 134.66 C 135.08 153.95 116.61 185.66 113.38 219.13 C 113.20 220.63 113.07 222.19 112.22 223.51 C 110.75 190.68 93.78 159.30 68.41 138.69 C 49.33 123.63 25.64 113.69 1.20 112.88 L 1.15 112.14 C 26.02 110.99 50.19 101.09 69.36 85.32 C 91.82 67.02 106.98 40.18 111.44 11.58 Z');
 
