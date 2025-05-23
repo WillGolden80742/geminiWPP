@@ -20,7 +20,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["images/sign.svg"],
+      "resources": ["images/*"],
       "matches": ["https://web.whatsapp.com/*"]
     }
   ],

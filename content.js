@@ -1,5 +1,3 @@
-// content.js
-
 let geminiObserver = null;
 
 // Seletor genérico para o campo de texto do WhatsApp
@@ -187,9 +185,11 @@ function observeMenuElement() {
                 // Verifica se o Gemini está habilitado e o item de menu ainda não existe
                 if (geminiEnabled && !document.querySelector('.reply_by_gemini')) {
                     // Cria o item de menu "Responder com Gemini"
-                    const geminiLiElement = createGeminiMenuItem();
+                    const geminiLiElement = replyWithGeminiMenuItem();
+                    const trainingLiMenuItem = trainingGeminiMenuItem();
 
                     // Adiciona o item ao início da lista
+                    ulElement.insertBefore(trainingLiMenuItem, ulElement.firstChild);
                     ulElement.insertBefore(geminiLiElement, ulElement.firstChild);
 
                     // Adiciona o evento de clique para o item "Responder com Gemini"
@@ -231,10 +231,17 @@ function observeMenuElement() {
  * Cria o elemento de menu "Responder com Gemini".
  * @returns {HTMLLIElement} Elemento de menu "Responder com Gemini".
  */
-function createGeminiMenuItem() {
+function replyWithGeminiMenuItem() {
+   return createGeminiMenuItem( 'reply_by_gemini', 'Reply with Gemini','gemini_gray_icon.svg');
+}
+
+function trainingGeminiMenuItem() {
+    return createGeminiMenuItem ('trainig_gemini','Training Gemini','neural_gray_icon.svg');
+}
+function createGeminiMenuItem(name,text,icon) {
     const geminiLiElement = document.createElement('li');
     geminiLiElement.setAttribute('tabindex', '0');
-    geminiLiElement.className = 'reply_by_gemini';
+    geminiLiElement.className = name;
     geminiLiElement.style.color = '#a5a5a5';
     geminiLiElement.style.borderRadius = '10px';
     geminiLiElement.setAttribute('data-animate-dropdown-item', 'true');
@@ -260,34 +267,20 @@ function createGeminiMenuItem() {
     spanIcon.setAttribute('aria-hidden', 'true');
     spanIcon.setAttribute('data-icon', 'search-refreshed');
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '24');
-    svg.setAttribute('height', '24');
-    svg.setAttribute('viewBox', '0 0 225 225');
-    svg.setAttribute('version', '1.1');
-    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    // Use the SVG from the file
+    const img = document.createElement('img');
+    img.src = chrome.runtime.getURL(`images/${icon}`); // Make sure the path is correct relative to the manifest
+    img.style.width = '24px'; // Optional: Adjust size as needed
+    img.style.height = '24px';// Optional: Adjust size as needed
+    img.alt = 'Gemini Icon'; // Optional: Add alt text for accessibility
 
-    const gBlack = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    gBlack.setAttribute('id', '#000000ff');
-
-    const gWhite = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    gWhite.setAttribute('id', '#a5a5a5');
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('fill', '#a5a5a5');
-    path.setAttribute('opacity', '1.00');
-    path.setAttribute('d', 'M 111.44 11.58 C 112.16 8.06 111.65 4.39 112.57 0.90 C 114.22 16.23 117.52 31.57 124.69 45.34 C 142.54 83.30 182.12 109.91 224.02 112.08 L 224.07 112.95 C 202.02 113.69 180.48 121.86 162.62 134.66 C 135.08 153.95 116.61 185.66 113.38 219.13 C 113.20 220.63 113.07 222.19 112.22 223.51 C 110.75 190.68 93.78 159.30 68.41 138.69 C 49.33 123.63 25.64 113.69 1.20 112.88 L 1.15 112.14 C 26.02 110.99 50.19 101.09 69.36 85.32 C 91.82 67.02 106.98 40.18 111.44 11.58 Z');
-
-    gWhite.appendChild(path);
-    svg.appendChild(gBlack);
-    svg.appendChild(gWhite);
-    spanIcon.appendChild(svg);
+    spanIcon.appendChild(img);
     iconDiv.appendChild(spanIcon);
     outerDiv.appendChild(iconDiv);
 
     const spanText = document.createElement('span');
     spanText.className = 'x1o2sk6j x6prxxf x6ikm8r x10wlt62 xlyipyv xuxw1ft xqmxbcd';
-    spanText.textContent = 'Reply with Gemini';
+    spanText.textContent = text;
 
     outerDiv.appendChild(spanText);
     geminiLiElement.appendChild(outerDiv);
