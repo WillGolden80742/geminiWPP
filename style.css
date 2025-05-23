@@ -43,7 +43,7 @@ label {
   color: #202124; /* Darker Google gray */
 }
 
-input[type="text"],
+input[type="password"],
 select,
 textarea {
   width: 100%;
@@ -55,13 +55,6 @@ textarea {
   font-size: 1rem;
 }
 
-#geminiApiKey {
-  filter: blur(5px);
-}
-
-#geminiApiKey:hover {
-  filter: blur(0px);
-}
 
 select {
   appearance: none;
