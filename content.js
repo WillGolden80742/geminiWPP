@@ -171,14 +171,7 @@ async function trainingGemini() {
     }, 1000);
   });
 }
-
 /**
- * Cria um prompt para treinar o Gemini para gerar um novo prompt customizado.
- * @param {string} context Histórico da conversa.
- * @param {string} quotedMessage Resposta ideal (mensagem citada).
- * @param {string} currentPrompt Prompt customizado atual.
- * @returns {string} Prompt formatado para treinamento.
- *//**
  * Cria um prompt para treinar o Gemini para gerar um novo prompt customizado.
  * @param {string} context Histórico da conversa.
  * @param {string} quotedMessage Resposta ideal (mensagem citada).
