@@ -24,6 +24,7 @@
       "matches": ["https://web.whatsapp.com/*"]
     }
   ],
+  "options_page": "options.html",
   "icons": {
     "48": "images/gemini_icon_logo.png"
   }

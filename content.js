@@ -17,13 +17,15 @@ async function getGeminiResponse(context) {
         const {
           geminiApiKey,
           geminiModel,
-          //customPrompt
         } = await chrome.storage.sync.get(["geminiApiKey", "geminiModel"]);
 
         const {
           customPrompt
         } = await chrome.storage.local.get(["customPrompt"]);
 
+        const {
+          fixedData
+        } = await chrome.storage.local.get(["fixedData"]);
 
         // Define o modelo Gemini a ser usado (usa o padrão se não estiver configurado)
         const model = geminiModel || 'gemini-1.5-flash';
@@ -39,7 +41,7 @@ async function getGeminiResponse(context) {
 
         const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const quotedMessage = getQuotedMessage();
-        const prompt = createGeminiPrompt(context, quotedMessage, customPrompt);
+        const prompt = await createGeminiPrompt(context, quotedMessage, customPrompt, fixedData);
 
         const response = await fetch(geminiApiUrl, {
           method: 'POST',
@@ -109,7 +111,7 @@ async function trainingGemini() {
         const apiKey = geminiApiKey;
 
         if (!apiKey) {
-          injectGeminiResponse(whatsAppInputElement,"Gemini API key not set. Please configure in the extension options.");
+          injectGeminiResponse(whatsAppInputElement, "Gemini API key not set. Please configure in the extension options.");
           reject("Gemini API key not set.");
           return;
         }
@@ -157,7 +159,7 @@ async function trainingGemini() {
           });
         } else {
           console.warn("Gemini API response did not contain valid candidates for training.");
-          injectGeminiResponse(whatsAppInputElement,"Error training Gemini. No valid response received.");
+          injectGeminiResponse(whatsAppInputElement, "Error training Gemini. No valid response received.");
           reject("No valid response from Gemini API.");
         }
 
@@ -196,11 +198,24 @@ New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
  * @param {string} context Histórico da conversa.
  * @param {string} quotedMessage Mensagem citada.
  * @param {string} customPrompt Prompt customizado.
+ * @param {object} fixedData Dados fixos.
  * @returns {string} Prompt formatado.
  */
-function createGeminiPrompt(context, quotedMessage, customPrompt) {
+async function createGeminiPrompt(context, quotedMessage, customPrompt, fixedData) {
   const userLanguage = navigator.language || navigator.userLanguage;
   let prompt = '';
+
+  // Adiciona os dados fixos ao prompt
+  if (fixedData) {
+    prompt += "Here is fixed data to take into consideration:\n";
+    for (const key in fixedData) {
+      if (fixedData.hasOwnProperty(key)) {
+        prompt += `${key}: ${fixedData[key]}\n`;
+      }
+    }
+    prompt += "\n";
+  }
+
   if (customPrompt) {
     prompt += `${customPrompt}\n\n`;
   }
@@ -280,6 +295,8 @@ function observeMenuElement() {
   const observer = new MutationObserver(mutations => {
     // Encontra o elemento ul dentro do menu
     const ulElement = document.querySelector('[data-icon="reply-refreshed"]').parentElement.parentElement.parentElement.parentElement.parentElement;
+    ulElement.parentElement.parentElement.style.height = '325px';
+    ulElement.parentElement.parentElement.style.overflowY = 'auto';
     if (ulElement) {
       // Pequeno atraso para garantir que o elemento esteja totalmente carregado
       setTimeout(async () => {
