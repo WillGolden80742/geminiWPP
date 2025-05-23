@@ -79,10 +79,6 @@ This Chrome extension enhances your WhatsApp Web experience by integrating smart
 
 Contributions are welcome! Feel free to submit pull requests with bug fixes, new features, or improvements to the documentation.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ## Future Enhancements
 
 *   Improve the accuracy and relevance of Gemini responses.
