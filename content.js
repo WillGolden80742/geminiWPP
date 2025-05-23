@@ -119,7 +119,7 @@ async function trainingGemini() {
         const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const quotedMessage = getQuotedMessage();
         const context = collectChatHistory();
-        const trainingPrompt = createTrainingPrompt(context, quotedMessage, customPrompt);
+        const trainingPrompt = await createTrainingPrompt(context, quotedMessage, customPrompt);
         const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
         const response = await fetch(geminiApiUrl, {
           method: 'POST',
@@ -178,8 +178,14 @@ async function trainingGemini() {
  * @param {string} quotedMessage Resposta ideal (mensagem citada).
  * @param {string} currentPrompt Prompt customizado atual.
  * @returns {string} Prompt formatado para treinamento.
+ *//**
+ * Cria um prompt para treinar o Gemini para gerar um novo prompt customizado.
+ * @param {string} context Histórico da conversa.
+ * @param {string} quotedMessage Resposta ideal (mensagem citada).
+ * @param {string} currentPrompt Prompt customizado atual.
+ * @returns {string} Prompt formatado para treinamento.
  */
-function createTrainingPrompt(context, quotedMessage, currentPrompt) {
+async function createTrainingPrompt(context, quotedMessage, currentPrompt) {
   const userLanguage = navigator.language || navigator.userLanguage;
   let prompt = `You are an expert prompt engineer. Your task is to enhance, but *not replace*, an existing custom prompt for the Gemini model. Analyze the following conversation context, an "ideal" response provided by a user, and the current custom prompt.
 
@@ -190,6 +196,17 @@ Current Custom Prompt: ${currentPrompt}
 Based on this information, generate a new and improved custom prompt in ${userLanguage} language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific.  Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
 
 New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
+
+  // Substitute fixed data values with "[VALUE]"
+  const { fixedData } = await chrome.storage.local.get(["fixedData"]);
+  if (fixedData) {
+    for (const key in fixedData) {
+      if (fixedData.hasOwnProperty(key)) {
+        const regex = new RegExp(fixedData[key], 'gi'); // Create a regular expression to find all occurrences, case-insensitive
+        prompt = prompt.replace(regex, '[VALUE]'); // Replace all occurrences of the value
+      }
+    }
+  }
   return prompt;
 }
 
