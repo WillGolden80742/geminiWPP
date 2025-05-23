@@ -32,7 +32,7 @@ This Chrome extension enhances your WhatsApp Web experience by integrating smart
 
 1.  **Open WhatsApp Web in your browser.**
 2.  **Click on the extension icon in the Chrome toolbar to open the popup.**
-3.  **Enter your Gemini API key.**  You'll need a valid API key from Google Cloud's Generative AI service.
+3.  **Enter your Gemini API key.**  You'll need a valid API key from Google Cloud's Generative AI service. You can obtain an API key at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 4.  **Select the Gemini model you want to use.**
 5.  **Enable the extension by toggling the "Enable Gemini" option.**
 6.  **(Optional) Customize the prompt according to your needs in the `Custom Prompt` field.**
@@ -45,7 +45,7 @@ This Chrome extension enhances your WhatsApp Web experience by integrating smart
 
 ## Configuration Options
 
-*   **Gemini API Key:**  Your API key for accessing the Gemini API.  This is *required* for the extension to function.  You can obtain an API key from Google Cloud's Generative AI service.
+*   **Gemini API Key:**  Your API key for accessing the Gemini API.  This is *required* for the extension to function.  You can obtain an API key from Google Cloud's Generative AI service at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 *   **Gemini Model:** The Gemini model to use for generating responses.  Defaults to `'gemini-1.5-flash'`.
 *   **Enable Gemini:**  A toggle to enable or disable the Gemini integration in WhatsApp Web.
 *   **Custom Prompt:** A customizable prompt that is included with every API request. This allows you to fine-tune how Gemini generates responses.
