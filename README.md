@@ -86,7 +86,6 @@ This project is licensed under the [MIT License](LICENSE).
 ## Future Enhancements
 
 *   Improve the accuracy and relevance of Gemini responses.
-*   Add support for more Gemini models.
 *   Implement a more sophisticated training mechanism.
 *   Add options for response formatting.
 *   Include the custom prompt at a global level or a chat level.
