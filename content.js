@@ -213,7 +213,20 @@ New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
  */
 async function createGeminiPrompt(context, quotedMessage, customPrompt, fixedData) {
   const userLanguage = navigator.language || navigator.userLanguage;
-  let prompt = '';
+  // Add greeting with
+  const now = new Date();
+  let hour = now.getHours();
+  if (hour >= 5 && hour < 12) {
+    greeting = 'Good morning!';
+  } else if (hour >= 12 && hour < 18) {
+    greeting = 'Good afternoon!';
+  } else {
+    greeting = 'Good evening!';
+  }
+  
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+
+  let prompt = `Current hour is ${hour}${ampm} and you should start the greeting with ${greeting} in current language!\n\n`;
 
   // Adiciona os dados fixos ao prompt
   if (fixedData) {
