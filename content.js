@@ -182,24 +182,14 @@ async function createTrainingPrompt(context, quotedMessage, currentPrompt) {
   const userLanguage = navigator.language || navigator.userLanguage;
   let prompt = `You are an expert prompt engineer. Your task is to enhance, but *not replace*, an existing custom prompt for the Gemini model. Analyze the following conversation context, an "ideal" response provided by a user, and the current custom prompt.
 
-Conversation Context: ${context}
-Ideal Response (Quoted Message): ${quotedMessage}
-Current Custom Prompt: ${currentPrompt}
+  Conversation Context: ${context}
+  Ideal Response (Quoted Message): ${quotedMessage}
+  Current Custom Prompt: ${currentPrompt}
 
-Based on this information, generate a new and improved custom prompt in ${userLanguage} language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific.  Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
+  Based on this information, generate a new and improved custom prompt in ${userLanguage} language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific.  Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
 
-New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
+  New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
 
-  // Substitute fixed data values with "[VALUE]"
-  const { fixedData } = await chrome.storage.local.get(["fixedData"]);
-  if (fixedData) {
-    for (const key in fixedData) {
-      if (fixedData.hasOwnProperty(key)) {
-        const regex = new RegExp(fixedData[key], 'gi'); // Create a regular expression to find all occurrences, case-insensitive
-        prompt = prompt.replace(regex, '[VALUE]'); // Replace all occurrences of the value
-      }
-    }
-  }
   return prompt;
 }
 
