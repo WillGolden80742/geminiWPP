@@ -197,7 +197,7 @@ async function createTrainingPrompt(context, quotedMessage, fromMessage, current
     Ideal Response (Quoted Message): [QUOTEDMESSAGE]
     Current Custom Prompt: [CURRENTPROMPT]
 
-    Based on this information, generate a new and improved custom prompt in ${userLanguage} language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific. Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
+    Based on this information, generate a new and improved custom prompt in [CURRENTLANGUAGE] language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific. Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
 
     New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
 
@@ -206,7 +206,7 @@ async function createTrainingPrompt(context, quotedMessage, fromMessage, current
     let prompt = promptTemplate.replace(/\[CONTEXT\]/g, context)
         .replace(/\[QUOTEDMESSAGE\]/g, quotedMessage)
         .replace(/\[FROMMESSAGE\]/g, fromMessage)
-        .replace(/\[CURRENTPROMPT\]/g, currentPrompt);
+        .replace(/\[CURRENTPROMPT\]/g, currentPrompt).replace(/\[CURRENTLANGUAGE\]/g, userLanguage);
 
     return prompt;
 }

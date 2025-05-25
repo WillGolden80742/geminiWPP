@@ -1,40 +1,58 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gemini Responder</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  <div class="header">
-    <h1>Gemini Responder</h1>
-    <img src="images/sign.svg" alt="Gemini Logo" class="logo">
+  <div class="popup-container">
+    <header class="popup-header">
+      <img src="images/sign.svg" alt="Gemini Logo" class="popup-logo">
+      <h1>Gemini Responder</h1>
+    </header>
+
+    <section class="popup-content">
+      <div class="form-group">
+        <label for="geminiApiKey">Gemini API Key:</label>
+        <input type="password" id="geminiApiKey" placeholder="Enter your API Key">
+      </div>
+
+      <div class="form-group">
+        <label for="geminiModel">Gemini Model:</label>
+        <select id="geminiModel">
+          <option disabled selected>Loading models...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="customPrompt">Custom Prompt:</label>
+        <textarea id="customPrompt" placeholder="Enter your custom prompt (max 1,000,000 characters)"
+          rows="4"></textarea>
+      </div>
+
+      <div class="toggle-container">
+        <label for="enableGemini">Enable Gemini:</label>
+        <label class="switch">
+          <input type="checkbox" id="enableGemini">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <footer class="popup-footer">
+      <button id="saveSettings">Save Settings</button>
+      <button id="openOptions">Configure</button>
+    </footer>
   </div>
-
-  <label for="geminiApiKey">Gemini API Key:</label>
-  <input type="password" id="geminiApiKey" placeholder="Enter your API Key">
-
-  <label for="geminiModel">Gemini Model:</label>
-  <select id="geminiModel">
-    <option disabled selected>Loading models...</option>
-  </select>
-
-  <label for="customPrompt">Custom Prompt:</label>
-  <textarea id="customPrompt" placeholder="Enter your custom prompt (max 1,000,000 characters)" rows="5" cols="30"></textarea>
-
-  <div class="toggle-container">
-    <label for="enableGemini">Enable Gemini:</label>
-    <label class="switch">
-      <input type="checkbox" id="enableGemini">
-      <span class="slider"></span>
-    </label>
-  </div>
-
-  <button id="saveSettings">Save Settings</button>
-  <button id="openOptions">Configure Fixed Data</button> <!-- Botão para as opções -->
 
   <script src="popup.js"></script>
 </body>
+
 </html>

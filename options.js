@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabButtons = document.querySelectorAll(".tablinks"); // Get all tab buttons
   const tabContents = document.querySelectorAll(".tabcontent"); // Get all tab contents
 
+    // Load existing data on startup
+  loadFixedData();
+  loadcustomTrainingPrompt();
+
   // Function to open a tab
   function openTab(evt, tabName) {
     tabContents.forEach(tabContent => {
@@ -26,15 +30,36 @@ document.addEventListener("DOMContentLoaded", () => {
     button.addEventListener("click", (event) => {
       const tabName = event.currentTarget.dataset.tab;
       openTab(event, tabName);
+      if (tabName === "CustomTraining") {
+        loadcustomTrainingPrompt();
+      } else if (tabName === "FixedData") {
+        loadFixedData();
+      }
     });
   });
 
   // Open Custom Training tab by default
   openTab({ currentTarget: tabButtons[0] }, "CustomTraining"); // Simulate a click
 
-  // Load existing data on startup
-  loadFixedData();
-  loadcustomTrainingPrompt();
+  function listenerFixedData() {
+      const inputGroups = document.querySelectorAll("#fixedDataContainer .input-group");
+
+      inputGroups.forEach(group => {
+        const keyInput = group.querySelector("input[type='text']:nth-of-type(1)");
+        const valueInput = group.querySelector("input[type='text']:nth-of-type(2)");
+
+        keyInput.addEventListener("input", () => {
+            saveFixedDataButton.style.display = "initial"; // Show the button
+        });
+
+        valueInput.addEventListener("input", () => {
+          saveFixedDataButton.style.display = "initial"; // Show the button
+        });
+
+      });
+  }
+
+
 
   // Function to create an input group (label, key, value, delete button)
   function createFixedDataInput() {
@@ -67,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", () => {
       div.remove();
+      saveFixedData();
     });
     div.appendChild(deleteButton);
 
@@ -77,12 +103,31 @@ document.addEventListener("DOMContentLoaded", () => {
   addFixedDataButton.addEventListener("click", () => {
     const newInputGroup = createFixedDataInput();
     fixedDataContainer.appendChild(newInputGroup);
+    saveFixedData();
+    saveFixedDataButton.style.display = "initial"; 
+    listenerFixedData();
   });
 
-  // Save fixed data to storage
   saveFixedDataButton.addEventListener("click", () => {
+    saveFixedData();
+    alert("Fixed data saved!");
+    saveFixedDataButton.style.display = "none";
+  });
+
+  function createNoFixedDataMessage() {
+      const noFixedDataMessage = document.createElement("h3");
+      noFixedDataMessage.textContent = "No fixed data registered yet";
+      fixedDataContainer.appendChild(noFixedDataMessage);
+  }
+
+  // Save fixed data to storage
+  function saveFixedData() {
     const fixedData = {};
     const inputGroups = document.querySelectorAll("#fixedDataContainer .input-group");
+
+    if (inputGroups.length === 0) {
+      createNoFixedDataMessage();
+    }
 
     inputGroups.forEach(group => {
       const keyInput = group.querySelector("input[type='text']:nth-of-type(1)");
@@ -91,16 +136,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const key = keyInput.value.trim();
       const value = valueInput.value.trim();
 
-      if (key !== "") {
+      if (key !== "" && value !== "") {
         fixedData[key] = value;
       }
     });
 
     chrome.storage.local.set({ fixedData: fixedData }, () => {
       console.log("Fixed data saved:", fixedData);
-      alert("Fixed data saved!");
     });
-  });
+  }
 
   saveCustomPromptButton.addEventListener("click", () => {
     chrome.storage.local.set({ customTrainingPrompt: customTrainingPrompt.value }, () => {
@@ -110,6 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load fixed data from storage
   function loadFixedData() {
+    
+    fixedDataContainer.innerHTML = "";
     chrome.storage.local.get("fixedData", (data) => {
       const fixedData = data.fixedData || {};
 
@@ -127,19 +173,23 @@ document.addEventListener("DOMContentLoaded", () => {
           fixedDataContainer.appendChild(newInputGroup);
         }
       }
+      if (Object.keys(fixedData).length === 0) {
+        createNoFixedDataMessage();
+        return;
+      } 
+      listenerFixedData();
     });
   }
 
   function loadcustomTrainingPrompt() {
     chrome.storage.local.get("customTrainingPrompt", (data) => {
-      const userLanguage = navigator.language || navigator.userLanguage;
       const customTrainingPromptValue = data.customTrainingPrompt || `You are an expert prompt engineer. Your task is to enhance, but *not replace*, an existing custom prompt for the Gemini model. Analyze the following conversation context, an "ideal" response provided by a user, and the current custom prompt.
 
       Conversation Context: [CONTEXT]
       Ideal Response (Quoted Message): [QUOTEDMESSAGE]
       Current Custom Prompt: [CURRENTPROMPT]
 
-      Based on this information, generate a new and improved custom prompt in ${userLanguage} language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific. Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
+      Based on this information, generate a new and improved custom prompt in [CURRENTLANGUAGE] language. Critically, *preserve the existing functionality of the current prompt*. Only add to or subtly refine the current prompt to make it better align with the "ideal" response, given the conversation context. Do not remove or significantly alter existing instructions unless absolutely necessary for improved performance. Prioritize adding new relevant instructions, clarifying existing ones, or making them more specific. Consider if the current prompt is missing any crucial information or constraints that would guide the Gemini model to a better response.
 
       New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
 

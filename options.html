@@ -6,39 +6,47 @@
   <title>Gemini Responder Options</title>
   <link rel="stylesheet" href="style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div class="header">
-    <h1>Gemini Responder Options</h1>
-    <img src="images/sign.svg" alt="Gemini Logo" class="logo">
+  <div class="options-container">
+    <aside class="sidebar">
+      <div class="logo-container">
+        <img src="images/sign.svg" alt="Gemini Logo" class="logo">
+        <h1>Gemini Responder</h1>
+      </div>
+      <nav>
+        <button class="tablinks active" data-tab="CustomTraining">Custom Training</button>
+        <button class="tablinks" data-tab="FixedData">Fixed Data</button>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <section id="CustomTraining" class="tabcontent active">
+        <h2>Custom Training Prompt</h2>
+        <p class="description">Use the following variables: <code><b>[CONTEXT]</b></code>,
+          <code><b>[QUOTEDMESSAGE]</b></code>, <code><b>[FROMMESSAGE]</b></code>,
+          <code><b>[CURRENTPROMPT]</b></code>, <code><b>[CURRENTLANGUAGE]</b></code> to improve the training.</p>
+        <textarea id="customTrainingPrompt"
+          placeholder="Enter your custom training prompt (max 1,000,000 characters)" rows="8"></textarea>
+        <button id="saveCustomPrompt">Save Custom Training Prompt</button>
+      </section>
+
+      <section id="FixedData" class="tabcontent">
+        <h2>Fixed Data</h2>
+        <p class="description">Use this section to provide Gemini Responder with fixed data, such as <b>phone</b>, <b>email</b>, <b>address</b>, <b>important links</b>, etc. This information is used to generate more accurate responses, but is not used to train the model.</p>
+        <div id="fixedDataContainer">
+          <h3>No fixed data registered yet</h3>
+        </div>
+
+        <button id="addFixedData">Add New Data</button>
+        <button id="saveFixedData">Save Fixed Data</button>
+      </section>
+    </main>
   </div>
-
-  <div class="tab">
-    <button class="tablinks" data-tab="CustomTraining">Custom Training</button>
-    <button class="tablinks" data-tab="FixedData">Fixed Data</button>
-  </div>
-
-  <div id="CustomTraining" class="tabcontent">
-    <h2>Custom Training Prompt</h2>
-    <p>Use the following variables: <code><b>[CONTEXT]</b></code>, <code><b>[QUOTEDMESSAGE]</b></code>,
-      <code><b>[FROMMESSAGE]</b></code>,
-      <code><b>[CURRENTPROMPT]</b></code> to improve the training.</p>
-    <textarea id="customTrainingPrompt"
-      placeholder="Enter your custom training prompt (max 1,000,000 characters)" rows="10" cols="50"></textarea>
-    <button id="saveCustomPrompt">Save Custom Training Prompt</button>
-  </div>
-
-  <div id="FixedData" class="tabcontent">
-    <h2>Fixed Data</h2>
-    <div id="fixedDataContainer">
-      <h3>No fixed data registered yet</h3>
-    </div>
-
-    <button id="addFixedData">Add New Data</button>
-    <button id="saveFixedData">Save Fixed Data</button>
-  </div>
-
 
   <script src="options.js"></script>
 </body>
