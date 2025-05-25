@@ -8,12 +8,17 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Importe Material Design Icons (se desejar) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+
 </head>
 
 <body>
   <div class="popup-container">
     <header class="popup-header">
+      <!-- Use um ícone Material Design (se usar a biblioteca) -->
+      <!-- <i class="mdi mdi-gemini popup-logo"></i> -->
       <img src="images/sign.svg" alt="Gemini Logo" class="popup-logo">
       <h1>Gemini Responder</h1>
     </header>
@@ -47,8 +52,8 @@
     </section>
 
     <footer class="popup-footer">
-      <button id="saveSettings">Save Settings</button>
-      <button id="openOptions">Configure</button>
+      <button id="saveSettings"><i class="mdi mdi-content-save"></i> Save Settings</button>
+      <button id="openOptions"><i class="mdi mdi-cog"></i> Configure</button>
     </footer>
   </div>
 

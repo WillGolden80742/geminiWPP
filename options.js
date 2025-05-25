@@ -88,8 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
     valueInput.placeholder = "Enter value";
     div.appendChild(valueInput);
 
+    // Create the Delete button with DOM methods
     const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
+    const icon = document.createElement("i");
+    icon.classList.add("mdi", "mdi-delete"); // Add Material Design Icon classes
+    deleteButton.appendChild(icon);
+
+    const textNode = document.createTextNode(" Delete"); // Add text node for "Delete"
+    deleteButton.appendChild(textNode);
+
     deleteButton.addEventListener("click", () => {
       div.remove();
       saveFixedData();

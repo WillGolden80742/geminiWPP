@@ -1,298 +1,187 @@
-
-
-html, body {
-  width: 100%;
-  margin: 0; /* Remove default body margins */
-  padding: 0; /* Remove default body padding */
-  overflow: hidden; /* Prevent scrollbars */
+:root {
+  --primary-color: #d3e3fd;
+  /* Roxo Escuro */
+  --secondary-color: #090808;
+  /* Rosa Vibrante */
+  --background-color: #FAFAFA;
+  /* Cinza Muito Claro */
+  --text-primary: #212121;
+  /* Cinza Escuro Quase Preto */
+  --text-secondary: #757575;
+  /* Cinza Médio */
+  --border-color: #BDBDBD;
+  /* Cinza Claro para Bordas */
+  --gemini-blue: #4285F4;
+  /* Gemini Blue (Primary) */
+  --gemini-light-blue: #90CAF9;
+  /* Light Blue (Secondary) */
+  --gemini-purple: #E8EAF6;
+  /* Very Light Purple (Background accent) */
+  --gemini-text-light: #616161;
+  /* Light Gray for Hints/Placeholders */
+  --gemini-gray-100: #F5F5F5;
+  /* Very Light Gray Background */
+  --gemini-gray-200: #EEEEEE;
+  /* Lighter Gray for Dividers/Borders */
+  --gemini-gray-600: #757575;
+  /* Medium Gray for Subtitle/Secondary Text */
+  --gemini-white: #FFFFFF;
+  /* Pure White Background */
+  --gemini-active-font: #0845a0;
+  --gemini-upgrade-button: #83b1ff;
+  /* Color of the Upgrade button */
 }
 
-body {
-  display: flex; /* Use flexbox to center the content */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  font-family: 'Roboto', sans-serif;
-  background-color: #ffffff;
-  /* White background */
-  color: #5f6368;
-  /* Google gray */
-}
-
-.options-container {
-  display: flex;
-  width: 100vw; /* Take up the full viewport width */
-  height: 100vh; /* Take up the full viewport height */
-  background-color: #fff; /* White container */
-  overflow: hidden; /* Prevent content overflow */
-  border-radius: 0; /* Remove border-radius for full-screen */
-  box-shadow: none; /* Remove box-shadow for full-screen */
-}
-
-.sidebar {
-  max-width: 250px; /* Fixed sidebar width */
-  background-color: #e9ecef; /* Light gray sidebar */
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch; /* Stretch buttons to full width */
-  border-right: 1px solid #dee2e6; /* Subtle divider */
-  height: 100%; /* Make sidebar full height */
-  box-sizing: border-box; /* Include padding in width calculation */
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.logo {
-  width: 40px;
-  height: auto;
-  margin-right: 10px;
-}
-
-.sidebar h1 {
-  font-size: 1.5rem;
-  color: #495057; /* Dark gray title */
-  margin: 0;
-  font-weight: 600;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar button {
-  background-color: transparent; /* Transparent background */
-  border: none;
-  color: #495057; /* Dark gray button text */
-  padding: 12px 15px;
-  text-align: left;
-  text-decoration: none;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  margin-bottom: 5px; /* Spacing between buttons */
-}
-
-.sidebar button:hover,
-.sidebar button.active {
-  background-color: #dee2e6; /* Lighter gray on hover/active */
-  color: #212529; /* Even darker text on hover/active */
-  font-weight: 600;
-}
-
-.sidebar button.active {
-  background-color: #4285f4;
-  color: white;
-}
-
-
-/* Main Content Styles */
-.main-content {
-  flex-grow: 1; /* Take up remaining space */
-  padding: 30px;
-  overflow-y: auto; /* Allow vertical scrolling if content overflows */
-  height: 100%; /* Make main content full height */
-  box-sizing: border-box; /* Include padding in width calculation */
-}
-
-.main-content h2 {
-  font-size: 1.75rem;
-  color: #343a40;
-  margin-bottom: 15px;
-}
-
-.description {
-  color: #6c757d; /* Muted description text */
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-/* Form Elements */
-textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border: 1px solid #ced4da; /* Light border */
-  border-radius: 8px;
-  font-size: 1rem;
-  line-height: 1.5;
-  resize: vertical; /* Allow vertical resizing */
-}
-
-button {
-  background-color: #4285f4; /* Google Blue */
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-button:hover {
-  background-color: #357ae8; /* Darker Blue on Hover */
-}
-
-/* Fixed Data Styles */
-#fixedDataContainer {
-  margin-bottom: 20px;
-  height: 350px; /* Limit height for scroll */
-  overflow-y: auto;
-  padding: 10px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-}
-
-#fixedDataContainer h3 {
-  color: #6c757d;
-  font-size: 1rem;
-  text-align: center;
-  padding: 15px;
-}
-
-#customTrainingPrompt {
-  min-height: 350px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-  padding: 15px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  background-color: #f8f9fa; /* Light background for each group */
-}
-
-.input-group label {
-  margin-bottom: 5px;
-  font-weight: 600;
-  color: #495057;
-}
-
-.input-group input[type="text"] {
-  padding: 10px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.input-group button {
-  background-color: #dc3545; /* Red for delete */
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  align-self: flex-start;
-  transition: background-color 0.2s ease;
-}
-
-.input-group button:hover {
-  background-color: #c82333;
-}
-
-/* General Reset (if not already present) */
-* {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Reset CSS (para consistência entre navegadores) */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Apply font globally, or to a specific container */
-body {
-  font-family: 'Nunito', sans-serif;
+body,
+html {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* Evita barras de rolagem indesejadas */
+  font-family: 'Roboto', sans-serif;
+  /* Fonte Roboto */
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Estilos Gerais */
+button {
+  background-color: var(--primary-color);
+  color: var(--gemini-active-font);
+  font-weight: 600;
+  border: none;
+  /* Remove a borda padrão */
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* Espaçamento para o ícone */
+}
+
+button:hover {
+  background-color: var(--gemini-upgrade-button);
+  /* Tom mais claro da cor primária */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  /* Sombra mais intensa no hover */
+}
+
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  outline: none;
+  /* Remove a borda de foco padrão */
+  transition: border-color 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary-color);
+  /* Destaque a cor primária no foco */
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  /* Peso da fonte um pouco mais forte */
+  color: var(--text-primary);
+}
+
+/* Popup (popup.html) */
 .popup-container {
-  width: 320px; /* Consistent popup width */
+  width: 350px;
+  /* Largura um pouco maior */
   background-color: #fff;
-  overflow: hidden; /* Clip rounded corners */
+  overflow: hidden;
 }
 
 .popup-header {
-  background-color: #4285f4; /* Google Blue */
-  color: #fff;
-  padding: 20px;
+  background-color: var(--primary-color);
+  color: var(--gemini-active-font);
+  padding: 10px;
   display: flex;
   align-items: center;
 }
 
 .popup-logo {
-  width: 30px;
+  width: 36px;
+  /* Tamanho maior do logo */
   height: auto;
-  margin-right: 10px;
-  fill:white;
+  margin-right: 12px;
+  /* fill: #fff; (se o SVG permitir) */
 }
 
 .popup-header h1 {
-  font-size: 1.25rem;
-  margin: 0; /* Remove default heading margin */
-  font-weight: 600;
-  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 .popup-content {
-  padding: 20px;
+  padding: 24px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 0px;
+  /* Mais espaço entre os elementos */
 }
 
-.form-group label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 5px;
-}
-
-.form-group input[type="password"],
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  font-size: 0.9rem;
-}
-
+/* Estilo para o select (dropdown) */
 .form-group select {
-  appearance: none; /* Remove default arrow */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%236c757d' d='M7.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 6.414l-3.293 3.293a1 1 0 0 1-1.414-1.414l4-4z'/%3E%3C/svg%3E"); /* Custom arrow */
+  /* Aparência customizada do select */
+  appearance: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23757575' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  /* Ícone de seta para baixo */
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 12px;
-  padding-right: 30px; /* Account for arrow */
+  background-position: right 12px center;
+  background-size: 24px;
+  padding-right: 40px;
+  /* Espaço para o ícone */
 }
 
 .toggle-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
 }
 
-.toggle-container label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #495057;
-}
-
+/* Estilo para o switch (toggle) - MAIS COMPLEXO */
 .switch {
   position: relative;
   display: inline-block;
-  width: 40px; /* Smaller switch */
-  height: 20px;
+  width: 50px;
+  height: 28px;
 }
 
 .switch input {
@@ -310,57 +199,226 @@ body {
   bottom: 0;
   background-color: #ccc;
   transition: .4s;
-  border-radius: 20px; /* Rounded ends */
+  border-radius: 28px;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 16px; /* Smaller circle */
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
   background-color: white;
   transition: .4s;
   border-radius: 50%;
 }
 
-input:checked + .slider {
-  background-color: #4285f4;
+input:checked+.slider {
+  background-color: var(--primary-color);
 }
 
-input:focus + .slider {
-  box-shadow: 0 0 1px #4285f4;
+input:hover+.slider {
+  background-color: var(--gemini-upgrade-button);
 }
 
-input:checked + .slider:before {
-  transform: translateX(20px);
+input:focus+.slider {
+  box-shadow: 0 0 2px var(--primary-color);
 }
 
+input:checked+.slider:before {
+  transform: translateX(22px);
+}
+
+/* Popup Footer */
 .popup-footer {
   display: flex;
   flex-direction: column;
-  gap:4px;
-  padding: 15px 20px;
+  gap: 8px;
+  padding: 20px 24px;
   text-align: right;
-  border-top: 1px solid #eee; /* Subtle border */
+  border-top: 1px solid #EEEEEE;
 }
 
 .popup-footer button {
-  background-color: #4285f4;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  font-size: 0.9rem;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+
+/* Options (options.html) */
+.options-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  background-color: var(--background-color);
+  /* Fundo mais claro */
+}
+
+.sidebar {
+  max-width: 280px;
+  /* Largura um pouco maior */
+  background-color: #ECEFF1;
+  /* Tom de cinza bem claro */
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-right: 1px solid #CFD8DC;
+  /* Borda mais suave */
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.logo {
+  width: 40px;
+  height: auto;
+  margin-right: 12px;
+}
+
+.sidebar h1 {
+  font-size: 1.75rem;
+  font-weight: 500;
+  /* Peso da fonte um pouco mais forte */
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar button {
+  background-color: transparent;
+  border: 0;
+  color: var(--text-primary);
+  padding: 14px 16px;
+  text-align: left;
+  text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.sidebar button:hover {
+  background-color: #CFD8DC;
+  /* Tom de cinza mais escuro */
+  color: var(--text-primary);
+}
+
+.sidebar button.active {
+  background-color: var(--primary-color);
+  color: var(--gemini-active-font);
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 32px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.main-content h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+textarea {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+/* Fixed Data Section */
+#fixedDataContainer {
+  margin-bottom: 24px;
+  height: 300px;
+  overflow-y: auto;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+#fixedDataContainer h3 {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  text-align: center;
+  padding: 20px;
+}
+
+#customTrainingPrompt {
+  min-height: 300px;
+}
+
+.add-fixed-data-group-buttons {
+  display: flex;
+  flex-direction: row;
+  gap:20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.input-group button {
+  color: var(--gemini-white);
+}
+
+.input-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.input-group input[type="text"] {
+  padding: 12px;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  margin-bottom: 12px;
+  font-size: 1rem;
 }
 
-.popup-footer button:hover {
-  background-color: #357ae8;
+.input-group button {
+  background-color: #e53935;
+  /* Vermelho */
+  padding: 10px 16px;
+  border-radius: 6px;
+  align-self: flex-start;
 }
 
-#saveFixedData {
-  display: none;
+.input-group button:hover {
+  background-color: #d32f2f;
+  /* Vermelho mais escuro */
 }
