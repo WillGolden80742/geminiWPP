@@ -1,7 +1,5 @@
 # WhatsApp Gemini Responder
 
-![Gemini Icon](images/gemini_icon_logo.png)
-
 **Description:**
 
 The WhatsApp Gemini Responder is a Chrome extension that enhances your WhatsApp Web experience by integrating the power of Google's Gemini AI. It provides intelligent reply suggestions based on the context of your conversations, allowing you to respond quickly and effectively.  This extension adds two new menu items "Reply with Gemini" and "Training Gemini"
