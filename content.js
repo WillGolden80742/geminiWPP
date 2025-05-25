@@ -41,7 +41,8 @@ async function getGeminiResponse(context) {
 
         const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const quotedMessage = getQuotedMessage();
-        const prompt = await createGeminiPrompt(context, quotedMessage, customPrompt, fixedData);
+        const fromMessage = getFromMessage();
+        const prompt = await createGeminiPrompt(context, quotedMessage,fromMessage, customPrompt, fixedData);
 
         const response = await fetch(geminiApiUrl, {
           method: 'POST',
@@ -201,7 +202,7 @@ async function createTrainingPrompt(context, quotedMessage, currentPrompt) {
  * @param {object} fixedData Dados fixos.
  * @returns {string} Prompt formatado.
  */
-async function createGeminiPrompt(context, quotedMessage, customPrompt, fixedData) {
+async function createGeminiPrompt(context, quotedMessage, fromMessage, customPrompt, fixedData) {
   const userLanguage = navigator.language || navigator.userLanguage;
   // Add greeting with
   const now = new Date();
@@ -233,7 +234,7 @@ async function createGeminiPrompt(context, quotedMessage, customPrompt, fixedDat
     prompt += `${customPrompt}\n\n`;
   }
 
-  prompt += `Based on the following WhatsApp messages, generate an appropriate response in ${userLanguage} language: Context of the conversation: ${context} Respond to this message based on the context: ${quotedMessage} Response:`;
+  prompt += `Based on the following WhatsApp messages, generate an appropriate response in ${userLanguage} language: Context of the conversation: ${context} Respond to this message based on the context: ${quotedMessage} from: ${fromMessage}\nResponse:`;
 
   return prompt;
 }
@@ -296,7 +297,15 @@ function collectChatHistory() {
 function getQuotedMessage() {
   const messageElements = document.querySelectorAll('.quoted-mention');
   if (messageElements && messageElements.length > 0) {
-    return messageElements[messageElements.length - 1].parentElement.parentElement.textContent;
+    return messageElements[messageElements.length - 1].parentElement.textContent;
+  }
+  return "";
+}
+
+function getFromMessage() {
+  const messageElements = document.querySelectorAll('.quoted-mention');
+  if (messageElements && messageElements.length > 0) {
+    return messageElements[messageElements.length - 1].parentElement.parentElement.querySelector('div span').textContent;
   }
   return "";
 }
