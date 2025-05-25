@@ -4,14 +4,44 @@ document.addEventListener("DOMContentLoaded", () => {
   const saveCustomPromptButton = document.getElementById("saveCustomPrompt");
   const addFixedDataButton = document.getElementById("addFixedData");
   const saveFixedDataButton = document.getElementById("saveFixedData");
+  const tabButtons = document.querySelectorAll(".tablinks"); // Get all tab buttons
+  const tabContents = document.querySelectorAll(".tabcontent"); // Get all tab contents
+
+  // Function to open a tab
+  function openTab(evt, tabName) {
+    tabContents.forEach(tabContent => {
+      tabContent.style.display = "none";
+    });
+
+    tabButtons.forEach(tabButton => {
+      tabButton.classList.remove("active");
+    });
+
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+  }
+
+  // Add click listeners to tab buttons
+  tabButtons.forEach(button => {
+    button.addEventListener("click", (event) => {
+      const tabName = event.currentTarget.dataset.tab;
+      openTab(event, tabName);
+    });
+  });
+
+  // Open Custom Training tab by default
+  openTab({ currentTarget: tabButtons[0] }, "CustomTraining"); // Simulate a click
 
   // Load existing data on startup
   loadFixedData();
   loadcustomTrainingPrompt();
 
-
   // Function to create an input group (label, key, value, delete button)
   function createFixedDataInput() {
+    const noFixedDataMessage = document.querySelector("#fixedDataContainer h3");
+    if (noFixedDataMessage) {
+      noFixedDataMessage.remove();
+    }
     const div = document.createElement("div");
     div.classList.add("input-group");
 
@@ -84,6 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const fixedData = data.fixedData || {};
 
       for (const key in fixedData) {
+        const noFixedDataMessage = document.querySelector("#fixedDataContainer h3");
+        if (noFixedDataMessage) {
+          noFixedDataMessage.remove();
+        }
         if (fixedData.hasOwnProperty(key)) {
           const newInputGroup = createFixedDataInput();
           const keyInput = newInputGroup.querySelector("input[type='text']:nth-of-type(1)");
@@ -99,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadcustomTrainingPrompt() {
     chrome.storage.local.get("customTrainingPrompt", (data) => {
       const userLanguage = navigator.language || navigator.userLanguage;
-      const customTrainingPrompt = data.customTrainingPrompt || `You are an expert prompt engineer. Your task is to enhance, but *not replace*, an existing custom prompt for the Gemini model. Analyze the following conversation context, an "ideal" response provided by a user, and the current custom prompt.
+      const customTrainingPromptValue = data.customTrainingPrompt || `You are an expert prompt engineer. Your task is to enhance, but *not replace*, an existing custom prompt for the Gemini model. Analyze the following conversation context, an "ideal" response provided by a user, and the current custom prompt.
 
       Conversation Context: [CONTEXT]
       Ideal Response (Quoted Message): [QUOTEDMESSAGE]
@@ -109,8 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       New and Enhanced Custom Prompt (Preserving Existing Functionality):`;
 
-      document.querySelector("#customTrainingPrompt").textContent = customTrainingPrompt;
+      customTrainingPrompt.value = customTrainingPromptValue;
     });
   }
 });
-

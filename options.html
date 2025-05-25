@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <title>Gemini Responder Options</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Use the same style -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -15,21 +14,31 @@
     <img src="images/sign.svg" alt="Gemini Logo" class="logo">
   </div>
 
-    <div id="CustomTraining" class="tabcontent">
-      <h2>Custom Training Prompt</h2>
-      <p>Use the following variables: <code><b>[CONTEXT]</b></code>, <code><b>[QUOTEDMESSAGE]</b></code>, <code><b>[FROMMESSAGE]</b></code>,
-          <code><b>[CURRENTPROMPT]</b></code> to improve the training.</p> 
-      <textarea id="customTrainingPrompt"
-          placeholder="Enter your custom training prompt (max 1,000,000 characters)" rows="10" cols="50"></textarea>
-      <button id="saveCustomPrompt">Save Custom Training Prompt</button>
-    </div>
-
-  <div id="fixedDataContainer">
-    <!-- Here the fixed data will appear -->
+  <div class="tab">
+    <button class="tablinks" data-tab="CustomTraining">Custom Training</button>
+    <button class="tablinks" data-tab="FixedData">Fixed Data</button>
   </div>
 
-  <button id="addFixedData">Add New Data</button>
-  <button id="saveFixedData">Save Fixed Data</button>
+  <div id="CustomTraining" class="tabcontent">
+    <h2>Custom Training Prompt</h2>
+    <p>Use the following variables: <code><b>[CONTEXT]</b></code>, <code><b>[QUOTEDMESSAGE]</b></code>,
+      <code><b>[FROMMESSAGE]</b></code>,
+      <code><b>[CURRENTPROMPT]</b></code> to improve the training.</p>
+    <textarea id="customTrainingPrompt"
+      placeholder="Enter your custom training prompt (max 1,000,000 characters)" rows="10" cols="50"></textarea>
+    <button id="saveCustomPrompt">Save Custom Training Prompt</button>
+  </div>
+
+  <div id="FixedData" class="tabcontent">
+    <h2>Fixed Data</h2>
+    <div id="fixedDataContainer">
+      <h3>No fixed data registered yet</h3>
+    </div>
+
+    <button id="addFixedData">Add New Data</button>
+    <button id="saveFixedData">Save Fixed Data</button>
+  </div>
+
 
   <script src="options.js"></script>
 </body>
