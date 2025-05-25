@@ -104,7 +104,3 @@ The options page provides access to more advanced customization options.
     *   Provides a user interface for configuring the extension's basic settings.
     *   Allows users to define a custom prompt.
     *   Saves the settings to `chrome.storage.sync`.
-
-## License
-
-This project is currently unlicensed.
