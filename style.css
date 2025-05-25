@@ -96,6 +96,7 @@ select {
   border-radius: 8px;
   margin-bottom: 15px;
   outline: none;
+  resize: none !important;
   /* Remove a borda de foco padrão */
   transition: border-color 0.2s ease;
 }
