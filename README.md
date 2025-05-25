@@ -1,4 +1,3 @@
-```markdown
 # Gemini Responder - WhatsApp Web Extension
 
 [![GitHub Stars](https://img.shields.io/github/stars/WillGolden80742/geminiWPP?style=social)](https://github.com/WillGolden80742/geminiWPP/stargazers)
@@ -116,4 +115,3 @@ This project has no license. All rights reserved.
 ## Disclaimer
 
 This extension utilizes the Gemini AI API, and the generated responses are subject to the limitations and biases of the underlying AI model.  Use responsibly and review all generated responses before sending them. The developer is not responsible for any consequences resulting from the use of this extension.
-```
