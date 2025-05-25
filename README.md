@@ -1,91 +1,106 @@
 # WhatsApp Gemini Responder
 
-This Chrome extension enhances your WhatsApp Web experience by integrating smart responses powered by the Gemini API. It allows you to quickly generate replies based on the conversation context, making your communication more efficient and intelligent.
+**Description:**
+
+The WhatsApp Gemini Responder is a Chrome extension that enhances your WhatsApp Web experience by integrating the power of Google's Gemini AI. It provides intelligent reply suggestions based on the context of your conversations, allowing you to respond quickly and effectively.  This extension adds two new menu items "Reply with Gemini" and "Training Gemini"
+
+**Note:** This project is currently unlicensed.
 
 ## Features
 
-*   **Gemini-Powered Responses:** Generates contextually relevant replies using the Gemini API.
-*   **Custom Prompting:** Allows you to define custom prompts to tailor the Gemini responses to your specific needs.
-*   **Training Feature:**  Trains the Gemini API to improve custom prompts based on your feedback.
-*   **Fixed Data Integration:**  Includes fixed data in the prompt for consistent and relevant responses.
-*   **Easy Configuration:**  Simple setup through a popup menu to configure API keys, models, and other settings.
-*   **WhatsApp Web Integration:** Seamlessly integrates into the WhatsApp Web interface, adding menu items for Gemini responses and training.
+*   **AI-Powered Reply Suggestions:**  Generates relevant and context-aware responses using the Gemini API.
+*   **Customizable Prompts:**  Allows you to define custom prompts to tailor the AI's responses to your specific needs and style.
+*   **Gemini Training:**  Allows you to train Gemini to give you a better custom Prompt.
+*   **Fixed Data Integration:** Incorporate permanent data like contact information.
+*   **Easy to Use:** Seamlessly integrates into the WhatsApp Web interface.
+*   **Enable/Disable Functionality:**  Quickly toggle the extension on or off via the popup.
+*   **Model Selection:** Choose the Gemini model that best suits your needs.
+*   **Privacy-Focused:** No data is sent to any third-party servers besides Google's Gemini API.
 
 ## Installation
 
-1.  **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/WillGolden80742/geminiWPP.git
-    cd geminiWPP
-    ```
-
-2.  **Open Chrome and go to `chrome://extensions`.**
-
-3.  **Enable "Developer mode" in the top right corner.**
-
-4.  **Click "Load unpacked" and select the directory where you cloned the repository (`geminiWPP`).**
-
-5.  **The extension should now be installed.**
+1.  Download the repository as a ZIP file.
+2.  Extract the ZIP file to a local directory.
+3.  Open Chrome and navigate to `chrome://extensions/`.
+4.  Enable "Developer mode" in the top right corner.
+5.  Click "Load unpacked" and select the directory where you extracted the ZIP file.
+6.  The extension is now installed!
 
 ## Usage
 
-1.  **Open WhatsApp Web in your browser.**
-2.  **Click on the extension icon in the Chrome toolbar to open the popup.**
-3.  **Enter your Gemini API key.**  You'll need a valid API key from Google Cloud's Generative AI service. You can obtain an API key at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey).
-4.  **Select the Gemini model you want to use.**
-5.  **Enable the extension by toggling the "Enable Gemini" option.**
-6.  **(Optional) Customize the prompt according to your needs in the `Custom Prompt` field.**
-7.  **(Optional) Set Fixed Data in the options page.** This data will be included in every prompt sent to the Gemini API.
-8.  **Click "Save Settings".**
-9.  **In WhatsApp Web, when you select a message, a "Reply with Gemini" and "Training Gemini" option will appear in the message options menu.**
-10. **Click "Reply with Gemini" to generate a response based on the current conversation context.** The generated response will be inserted into the text input field.
-11. **Click "Training Gemini" to generate an improved custom prompt for the API.  This will use the selected message as a guideline to train the API to generate a better custom prompt.**
-12. **Edit or send the response as needed.**
+1.  Open WhatsApp Web in your Chrome browser ([https://web.whatsapp.com/](https://web.whatsapp.com/)).
+2.  Click the three dots on any chat
+3.  Click the `Reply with Gemini` menu item or `Training Gemini`.
+4.  The Gemini-generated response will be injected into the input field, ready for you to send or edit.
 
-## Configuration Options
+## Configuration
 
-*   **Gemini API Key:**  Your API key for accessing the Gemini API.  This is *required* for the extension to function.  You can obtain an API key from Google Cloud's Generative AI service at [https://aistudio.google.com/apikey](https://aistudio.google.com/apikey).
-*   **Gemini Model:** The Gemini model to use for generating responses.  Defaults to `'gemini-1.5-flash'`.
-*   **Enable Gemini:**  A toggle to enable or disable the Gemini integration in WhatsApp Web.
-*   **Custom Prompt:** A customizable prompt that is included with every API request. This allows you to fine-tune how Gemini generates responses.
-*   **Fixed Data:**  Key-value pairs that are added to the prompt for context.  Configure these in the options page.
+The extension's settings can be configured via the popup and options pages
 
-## Understanding the Code
+### Popup Page
 
-*   **`manifest.json`:**  Defines the extension's metadata, permissions, and content scripts.
-*   **`content.js`:**  The content script that injects the Gemini integration into WhatsApp Web.  This script is responsible for:
-    *   Observing the WhatsApp Web interface for new messages and menu actions.
-    *   Collecting chat history.
-    *   Calling the Gemini API to generate responses.
-    *   Injecting the generated responses into the WhatsApp text input field.
-*   **`popup.html`:**  The HTML for the extension's popup menu.
-*   **`popup.js`:**  The JavaScript for the extension's popup menu, handling API key configuration, model selection, and enabling/disabling the extension.
-*   **`options.html`:** The HTML for the extension's options page, to configure fixed data.
-*   **`options.js`:** The Javascript for the extension's options page, to configure fixed data.
-*   **`style.css`:**  Styling for the popup and options page.
-*   **`images/`:** Contains the icons used in the extension.
+*   **Gemini API Key:**  Enter your Google Gemini API key.  This is required for the extension to function.
+*   **Gemini Model:** Select the specific Gemini model you want to use for generating responses. Make sure your API Key have permission to use this model.
+*   **Custom Prompt:**  Enter a custom prompt to guide the AI's responses.  This is a powerful way to tailor the extension to your specific needs. For examples of what a good prompt looks like, see the `options.html` section below.
+*   **Enable Gemini:**  A toggle to enable or disable the extension.
+*   **Save Settings:** Saves the configuration.
+*   **Configure:** Opens the options page for advanced settings.
 
-## Technical Details
+### Options Page (Advanced)
 
-*   The extension uses `chrome.storage.sync` for storing configuration settings (API key, model, enabled state) across multiple devices.
-*   The extension uses `chrome.storage.local` for storing the custom prompt, so it won't be synced across all logged-in chrome browsers.
-*   The content script uses Mutation Observers to detect changes in the WhatsApp Web interface.
-*   The content script injects custom menu items into the WhatsApp Web message options menu.
-*   The extension calls the Gemini API using the `fetch` API.
-*   Error handling is implemented to catch potential issues with the Gemini API and provide informative messages to the user.
+The options page provides access to more advanced customization options.
 
-## Contributing
+*   **Custom Training Prompt:**
+    This setting allows you to enhance the "Training Gemini" feature. When training, the extension uses this prompt to instruct Gemini on how to generate a better custom prompt, based on conversation context, ideal replies and the current custom prompt.
+    The custom training prompt makes use of this vars: `[CONTEXT]`, `[QUOTEDMESSAGE]`, `[FROMMESSAGE]`, `[CURRENTPROMPT]`, `[CURRENTLANGUAGE]`.
+*   **Fixed Data:**
+    *   This section allows you to provide the Gemini Responder with permanent information, such as your phone number, email address, company details, or links to important resources. This data will be included in the context when generating replies, leading to more accurate and relevant suggestions.
+    *   The Fixed Data is structured as key-value pairs.  For example:
+        *   Key: `Email`
+        *   Value: `support@example.com`
+    *   This data is incorporated into the prompt sent to the Gemini API.
 
-Contributions are welcome! Feel free to submit pull requests with bug fixes, new features, or improvements to the documentation.
+## Extension Logic
 
-## Future Enhancements
+1.  **Content Script (`content.js`):**
+    *   This script is injected into the WhatsApp Web page.
+    *   It observes the DOM (Document Object Model) for changes, specifically looking for the menu element to add the "Reply with Gemini" and "Training Gemini" items.
+    *   When a user clicks "Reply with Gemini":
+        *   The script collects the chat history using the `collectChatHistory()` function. This function gathers the messages and their senders (bot/client) to give Gemini a context.
+        *   The content of the last quoted message is get using `getQuotedMessage` for Gemini to have the message to answer.
+        *   The name of the last quoted message is get using `getFromMessage`.
+        *   The script calls the `getGeminiResponse()` function to communicate with the Gemini API.
+    *   When a user clicks "Training Gemini":
+        *   The script collects the chat history using the `collectChatHistory()` function. This function gathers the messages and their senders (bot/client) to give Gemini a context.
+        *   The content of the last quoted message is get using `getQuotedMessage` for Gemini to have the message to answer.
+        *   The name of the last quoted message is get using `getFromMessage`.
+        *   The script calls the `trainingGemini()` function to communicate with the Gemini API and update the custom prompt
 
-*   Improve the accuracy and relevance of Gemini responses.
-*   Implement a more sophisticated training mechanism.
-*   Add options for response formatting.
-*   Include the custom prompt at a global level or a chat level.
+2.  **Gemini API Communication (`getGeminiResponse()`):**
+    *   This function constructs a prompt to be sent to the Gemini API. The prompt includes:
+        *   The conversation history.
+        *   The custom prompt (if defined in the options).
+        *   Any fixed data (from the options).
+    *   It sends a `POST` request to the Gemini API endpoint (`https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`).
+    *   The response from the Gemini API is parsed, and the generated reply is extracted.
+    *   The reply is injected into the WhatsApp Web input field using the `injectGeminiResponse()` function.
+    *   This function also dispatch a `InputEvent` to be possible to send the message to WhatsApp.
 
-## Support
+3.  **Training Gemini API Communication (`trainingGemini()`):**
+    *   This function constructs a prompt to be sent to the Gemini API. The prompt includes:
+        *   The conversation history.
+        *   The custom prompt (if defined in the options).
+        *   The custom training prompt (if defined in the options).
+    *   It sends a `POST` request to the Gemini API endpoint (`https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`).
+    *   The response from the Gemini API is parsed, and the new custom prompt is extracted.
+    *   The new prompt is saved on the local storage.
 
-If you encounter any issues or have suggestions for improvements, please open an issue on the GitHub repository.
+4.  **Options Page (`options.html`, `options.js`):**
+    *   Provides a user interface for configuring the extension's advanced settings.
+    *   Allows users to add/edit fixed data and define a custom prompt.
+    *   Saves the settings to `chrome.storage.local`.
+
+5.  **Popup Page (`popup.html`, `popup.js`):**
+    *   Provides a user interface for configuring the extension's basic settings.
+    *   Allows users to define a custom prompt.
+    *   Saves the settings to `chrome.storage.sync`.
