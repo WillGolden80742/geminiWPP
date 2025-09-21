@@ -1,7 +1,37 @@
-let geminiObserver = null;
-
 // Generic selector for WhatsApp text input field
 const WHATSAPP_INPUT_SELECTOR = 'div[data-tab="10"][role="textbox"]';
+
+// Function to check if WhatsApp Signature Sender is enabled
+async function isWhatsAppSignatureSenderEnabled() {
+    return new Promise((resolve) => {
+        // WhatsApp Signature Sender likely injects its own content.js.
+        // We can check for a specific element or attribute it adds.
+        // This is a hypothetical check; you'd need to inspect the other extension.
+        // For demonstration, let's assume it adds a class 'whatsapp-signature-active' to the body.
+        if (document.body.classList.contains('whatsapp-signature-active')) {
+            resolve(true);
+        } else {
+            // Alternatively, if it modifies the input field, we could check for that.
+            // For now, let's rely on a more general approach or assume it's not active.
+            // A more robust check might involve sending a message to the background script
+            // and checking if the other extension's ID is enabled. However, that's complex
+            // due to Chrome extension security models preventing direct access to other extensions.
+            resolve(false);
+        }
+    });
+}
+
+/**
+ * Displays a warning to the user if WhatsApp Signature Sender is active.
+ * @param {HTMLElement} whatsAppInputElement The WhatsApp input field.
+ */
+function displaySignatureSenderWarning(whatsAppInputElement) {
+    const warningMessage = "Gemini Responder is not compatible with WhatsApp Signature Sender. Please disable WhatsApp Signature Sender and refresh the page for Gemini Responder to work.";
+    injectGeminiResponse(whatsAppInputElement, warningMessage); // Use the existing injection function
+    alert(warningMessage); // Also show an alert for immediate visibility
+    console.warn(warningMessage);
+}
+
 
 /**
  * Gets a response from the Gemini API based on the conversation context.
@@ -9,7 +39,15 @@ const WHATSAPP_INPUT_SELECTOR = 'div[data-tab="10"][role="textbox"]';
  * @returns {Promise<string>} Gemini's response.
  */
 async function getGeminiResponse(context) {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
+        const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
+
+        if (await isWhatsAppSignatureSenderEnabled()) {
+            displaySignatureSenderWarning(whatsAppInputElement);
+            resolve("Incompatible extension detected.");
+            return;
+        }
+
         // Adds a small delay to ensure the WhatsApp interface is ready
         setTimeout(async () => {
             try {
@@ -35,6 +73,7 @@ async function getGeminiResponse(context) {
                 if (!apiKey) {
                     const errorMessage = "Gemini API key not set. Please configure in the extension options.";
                     console.error(errorMessage);
+                    injectGeminiResponse(whatsAppInputElement, errorMessage);
                     resolve(errorMessage);
                     return;
                 }
@@ -57,9 +96,6 @@ async function getGeminiResponse(context) {
                         }]
                     })
                 });
-
-                // Gets the WhatsApp input element
-                const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
 
                 // Handles errors in the API response
                 if (!response.ok) {
@@ -96,7 +132,15 @@ async function getGeminiResponse(context) {
  * @returns {Promise<void>}
  */
 async function trainingGemini() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
+
+        if (await isWhatsAppSignatureSenderEnabled()) {
+            displaySignatureSenderWarning(whatsAppInputElement);
+            reject("Incompatible extension detected.");
+            return;
+        }
+
         setTimeout(async () => {
             try {
                 const {
@@ -116,7 +160,6 @@ async function trainingGemini() {
                 const apiKey = geminiApiKey;
 
                 if (!apiKey) {
-                    const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
                     injectGeminiResponse(whatsAppInputElement, "Gemini API key not set. Please configure in the extension options.");
                     reject("Gemini API key not set.");
                     return;
@@ -127,7 +170,7 @@ async function trainingGemini() {
                 const fromMessage = getFromMessage();
                 const context = collectChatHistory();
                 const trainingPrompt = await createTrainingPrompt(context, quotedMessage, fromMessage, customPrompt, customTrainingPrompt);
-                const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
+
                 const response = await fetch(geminiApiUrl, {
                     method: 'POST',
                     headers: {
@@ -172,7 +215,6 @@ async function trainingGemini() {
 
             } catch (error) {
                 console.error("Error training Gemini:", error);
-                const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
                 injectGeminiResponse(whatsAppInputElement, "Error training Gemini. Check console.");
                 reject(error);
             }
@@ -368,13 +410,29 @@ function getFromMessage() {
  * Observes the WhatsApp interface to add the Gemini menu item.
  */
 function observeMenuElement() {
-    const observer = new MutationObserver(mutations => {
+    const observer = new MutationObserver(async mutations => {
         // Finds the ul element inside the menu
         try {
             const ulElement = document.querySelector('[data-icon="reply-refreshed"]').parentElement.parentElement.parentElement.parentElement.parentElement;
             ulElement.parentElement.parentElement.style.height = '325px';
             ulElement.parentElement.parentElement.style.overflowY = 'auto';
+
             if (ulElement) {
+                // Check for compatibility here before adding menu items
+                if (await isWhatsAppSignatureSenderEnabled()) {
+                    // If incompatible, don't add the menu items and display a warning
+                    const whatsAppInputElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
+                    if (whatsAppInputElement) {
+                        displaySignatureSenderWarning(whatsAppInputElement);
+                    } else {
+                        // If input element isn't ready, just log and alert
+                        alert("Gemini Responder is not compatible with WhatsApp Signature Sender. Please disable WhatsApp Signature Sender and refresh the page for Gemini Responder to work.");
+                        console.warn("Gemini Responder: WhatsApp text input field not found, cannot display warning in field.");
+                    }
+                    observer.disconnect(); // Disconnect permanently if incompatible
+                    return;
+                }
+
                 // Small delay to ensure the element is fully loaded
                 setTimeout(async () => {
                     const {
@@ -514,13 +572,18 @@ function createGeminiMenuItem(name, text, icon) {
 }
 
 // Waits for the interface to load before starting (first time)
-const appObserver = new MutationObserver((mutations) => {
+const appObserver = new MutationObserver(async (mutations) => {
     // Uses the same generic selector for the initial element
     const appElement = document.querySelector(WHATSAPP_INPUT_SELECTOR);
 
     if (appElement) {
-        // Starts the observation. Call this function when the page is loaded.
-        observeMenuElement();
+        // Before observing the menu, check for incompatibility
+        if (await isWhatsAppSignatureSenderEnabled()) {
+            displaySignatureSenderWarning(appElement);
+        } else {
+            // Starts the observation. Call this function when the page is loaded.
+            observeMenuElement();
+        }
         appObserver.disconnect(); // Disconnects the observer once the #app element is found
     }
 });
