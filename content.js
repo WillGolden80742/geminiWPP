@@ -224,12 +224,50 @@ async function createGeminiPrompt(context, quotedMessage, fromMessage, customPro
     // Add greeting with
     const now = new Date();
     let hour = now.getHours();
+    let greeting = '';
+
+    const greetingsByLanguage = {
+        'en': { 'morning': 'Good morning!', 'afternoon': 'Good afternoon!', 'evening': 'Good evening!' },
+        'es': { 'morning': '¡Buenos días!', 'afternoon': '¡Buenas tardes!', 'evening': '¡Buenas noches!' },
+        'fr': { 'morning': 'Bonjour!', 'afternoon': 'Bon après-midi!', 'evening': 'Bonsoir!' },
+        'de': { 'morning': 'Guten Morgen!', 'afternoon': 'Guten Tag!', 'evening': 'Guten Abend!' },
+        'it': { 'morning': 'Buongiorno!', 'afternoon': 'Buon pomeriggio!', 'evening': 'Buonasera!' },
+        'pt': { 'morning': 'Bom dia!', 'afternoon': 'Boa tarde!', 'evening': 'Boa noite!' },
+        'ja': { 'morning': 'おはようございます！', 'afternoon': 'こんにちは！', 'evening': 'こんばんは！' },
+        'zh': { 'morning': '早上好！', 'afternoon': '下午好！', 'evening': '晚上好！' },
+        'ru': { 'morning': 'Доброе утро!', 'afternoon': 'Добрый день!', 'evening': 'Добрый вечер!' },
+        'ar': { 'morning': 'صباح الخير!', 'afternoon': 'مساء الخير!', 'evening': 'مساء الخير!' }, // Afternoon and evening are often the same
+        'hi': { 'morning': 'नमस्ते!', 'afternoon': 'नमस्ते!', 'evening': 'नमस्ते!' }, // Hindi often uses a general greeting
+        'ko': { 'morning': '좋은 아침입니다!', 'afternoon': '안녕하세요!', 'evening': '좋은 저녁입니다!' },
+        'nl': { 'morning': 'Goedemorgen!', 'afternoon': 'Goedemiddag!', 'evening': 'Goedenavond!' },
+        'sv': { 'morning': 'God morgon!', 'afternoon': 'God eftermiddag!', 'evening': 'God kväll!' },
+        'da': { 'morning': 'Godmorgen!', 'afternoon': 'God eftermiddag!', 'evening': 'God aften!' },
+        'no': { 'morning': 'God morgen!', 'afternoon': 'God ettermiddag!', 'evening': 'God kveld!' },
+        'fi': { 'morning': 'Hyvää huomenta!', 'afternoon': 'Hyvää iltapäivää!', 'evening': 'Hyvää iltaa!' },
+        'tr': { 'morning': 'Günaydın!', 'afternoon': 'Tünaydın!', 'evening': 'İyi akşamlar!' },
+        'pl': { 'morning': 'Dzień dobry!', 'afternoon': 'Dzień dobry!', 'evening': 'Dobry wieczór!' },
+        'th': { 'morning': 'สวัสดีตอนเช้า!', 'afternoon': 'สวัสดีตอนบ่าย!', 'evening': 'สวัสดีตอนเย็น!' },
+        'vi': { 'morning': 'Chào buổi sáng!', 'afternoon': 'Chào buổi chiều!', 'evening': 'Chào buổi tối!' },
+        'id': { 'morning': 'Selamat pagi!', 'afternoon': 'Selamat siang!', 'evening': 'Selamat malam!' },
+        'ms': { 'morning': 'Selamat pagi!', 'afternoon': 'Selamat tengah hari!', 'evening': 'Selamat malam!' },
+        'he': { 'morning': 'בוקר טוב!', 'afternoon': 'צהריים טובים!', 'evening': 'ערב טוב!' },
+        'el': { 'morning': 'Καλημέρα!', 'afternoon': 'Καλό απόγευμα!', 'evening': 'Καλησπέρα!' },
+        'cs': { 'morning': 'Dobré ráno!', 'afternoon': 'Dobré odpoledne!', 'evening': 'Dobrý večer!' },
+        'hu': { 'morning': 'Jó reggelt!', 'afternoon': 'Jó napot!', 'evening': 'Jó estét!' },
+        'ro': { 'morning': 'Bună dimineața!', 'afternoon': 'Bună ziua!', 'evening': 'Bună seara!' },
+        'uk': { 'morning': 'Доброго ранку!', 'afternoon': 'Доброго дня!', 'evening': 'Доброго вечора!' },
+        'bg': { 'morning': 'Добро утро!', 'afternoon': 'Добър ден!', 'evening': 'Добър вечер!' },
+    };
+
+    const langCode = userLanguage.split('-')[0]; // Get base language code (e.g., 'en' from 'en-US')
+    const currentGreetings = greetingsByLanguage[langCode] || greetingsByLanguage['en']; // Fallback to English
+
     if (hour >= 5 && hour < 12) {
-        greeting = 'Good morning!';
+        greeting = currentGreetings.morning;
     } else if (hour >= 12 && hour < 18) {
-        greeting = 'Good afternoon!';
+        greeting = currentGreetings.afternoon;
     } else {
-        greeting = 'Good evening!';
+        greeting = currentGreetings.evening;
     }
 
     const ampm = hour >= 12 ? 'PM' : 'AM';
